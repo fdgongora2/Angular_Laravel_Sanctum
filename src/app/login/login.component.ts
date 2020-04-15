@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from "../auth.service";
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -8,14 +10,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
 
-  constructor() { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
 
   LoginFormulario: FormGroup;
 
   ngOnInit(): void {
     this.LoginFormulario = new FormGroup({
-      'usuario': new FormControl('', [
+      'email': new FormControl('', [
         Validators.required,
         Validators.minLength(6)
       ]),
@@ -23,12 +25,26 @@ export class LoginComponent implements OnInit {
         Validators.required,
         Validators.minLength(4),
         Validators.maxLength(15)])
-      
-  }); // <-- add custom validator at the FormGroup level
+
+    }); // <-- add custom validator at the FormGroup level
   }
 
-  get usuario() { return this.LoginFormulario.get('usuario') }
+  get email() { return this.LoginFormulario.get('email') }
   get contrasena() { return this.LoginFormulario.get('contrasena') }
 
-
+  onSubmit() {    
+    const val = this.LoginFormulario.value;
+    console.log(val);
+    if (val.email && val.contrasena) {
+      this.authService.login(val.email, val.password);
+      /*
+        .subscribe(
+          () => {
+            console.log("User is logged in");
+            //  this.router.navigateByUrl('/'); 
+          }
+        );
+*/
+    }
+  }
 }
